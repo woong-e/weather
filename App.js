@@ -1,23 +1,52 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {Component} from 'react';
+import * as Location from 'expo-location';
+import { Alert } from 'react-native';
+import axios from 'axios';
+import Loading from './Loading';
+import Weather from "./Wheater";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>안녕하세요</Text>
-    </View>
-  );
-}
+const API_KEY = 'e0cced59be3a7f8c74c897fc8114ed13';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 40,
-    fontWeight: '500',
+export default class App extends Component {
+  //
+  state = {
+    isLoading: true,
+    temp: 0,
+    condition:'',
+  };
+
+  getWeather = async (latitude, longitude) => {
+    const {
+      data: {
+        main: {temp},
+        weather
+      }
+    } = await axios.get(`http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`);
+    this.setState({
+      temp,
+      condition: weather[0].main,
+    })
+  };
+
+  getLocation = async () => {
+    try {
+      await Location.requestPermissionsAsync();
+      const {coords: {latitude, longitude}} = await Location.getCurrentPositionAsync();
+
+      this.getWeather(latitude, longitude);
+      this.setState({isLoading: false});
+    } catch {
+      Alert.alert("can't find toy.", "so Sad");
+    }
+
+  };
+
+  componentDidMount() {
+    this.getLocation();
   }
-});
+
+  render() {
+    const { isLoading, temp, condition } = this.state;
+    return isLoading ? <Loading /> : <Weather temp={Math.round(temp)} condition={condition} />;
+  }
+}
