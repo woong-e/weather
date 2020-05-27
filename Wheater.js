@@ -32,7 +32,7 @@ const weatherOptions = {
     gradient: ['#4da0b0', '#d39d38'],
   },
   Clear: {
-    iconName: 'weather-sunny',
+    iconName: 'white-balance-sunny',
     gradient: ['#4da0b0', '#d39d38'],
   },
   Mist: {
@@ -43,7 +43,7 @@ const weatherOptions = {
     iconName: 'cloud',
     gradient: ['#4da0b0', '#d39d38'],
   },
-}
+};
 
 class Weather extends Component {
   //
@@ -74,8 +74,8 @@ class Weather extends Component {
 
     return (
       <View style={styles.container}>
+        <MaterialCommunityIcons size={150} name={weatherOptions[condition].iconName} />
         <StatusBar barStyle='light-content' />
-        <MaterialCommunityIcons size={96} name={weatherOptions[condition].iconName} color='white'/>
         <Text style={styles.temp}>{temp}°</Text>
         <Text style={styles.location}>{name}</Text>
         <Text style={styles.minMaxTemp}>최저기온: {temp_min}°</Text>
