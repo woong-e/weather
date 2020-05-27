@@ -75,7 +75,7 @@ class Weather extends Component {
     return (
       <View style={styles.container}>
         <StatusBar barStyle='light-content' />
-        <Text style={styles.temp}>{condition}</Text>
+        <MaterialCommunityIcons size={96} name={weatherOptions[condition].iconName} color='white'/>
         <Text style={styles.temp}>{temp}°</Text>
         <Text style={styles.location}>{name}</Text>
         <Text style={styles.minMaxTemp}>최저기온: {temp_min}°</Text>

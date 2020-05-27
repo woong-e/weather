@@ -8,7 +8,7 @@ import * as service from './serviceApi';
 export function* fetchSagas({latitude, longitude}) {
   try {
     const { data } = yield call(service.fetch, latitude, longitude);
-    console.log(data);
+
     yield put(actions.fetchSuccess(data));
     yield put(actions.changeLoading(false));
 
