@@ -1,10 +1,16 @@
-import React from 'react';
+import React, {Component} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function Loading() {
-  return <View style={styles.container}>
-    <Text styles={styles.text}>Getting the fucking weather</Text>
-  </View>
+class Loading extends Component {
+  //
+  render() {
+    const { animating } = this.props;
+    return (
+      <View style={styles.container}>
+        <Text styles={styles.text}>Getting the fucking weather</Text>
+      </View>
+    )
+  }
 }
 
 const styles = StyleSheet.create({
@@ -20,3 +26,5 @@ const styles = StyleSheet.create({
     fontSize: 48
   }
 });
+
+export default Loading;

@@ -1,8 +1,14 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Text, StatusBar} from 'react-native';
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as Location from 'expo-location';
 import { MaterialCommunityIcons  } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
+import PropTypes from 'prop-types';
+
+import actions from './store/weather/actions';
+import {indexSelector} from './store/weather/selectors';
+
 
 const weatherOptions = {
   Haze: {
@@ -37,32 +43,50 @@ const weatherOptions = {
     iconName: 'cloud',
     gradient: ['#4da0b0', '#d39d38'],
   },
-
 }
+
 class Weather extends Component {
   //
+  componentDidMount() {
+    this.getLocation();
+  }
+
+  getLocation = async () => {
+    await Location.requestPermissionsAsync();
+    const {coords: {latitude, longitude}} = await Location.getCurrentPositionAsync();
+    await this.props.actions.fetch(latitude, longitude);
+  };
+
   render() {
     const {
-      temp,
-      condition,
+      form: {
+        main: {
+          temp,
+          temp_max,
+          temp_min,
+        },
+        name,
+        weather,
+      },
     } = this.props;
+
+    const condition = weather && weather[0] && weather[0].main;
+
     return (
       <View style={styles.container}>
         <StatusBar barStyle='light-content' />
-        <View style={styles.halfContainer}>
-          <MaterialCommunityIcons size={96} name={'weather-cloudy'} color='white'/>
-          {/*<MaterialCommunityIcons size={96} name={weatherOptions[condition].iconName} color='white'/>*/}
-          <Text style={styles.temp}>{temp}°</Text>
-        </View>
-        <View style={styles.halfContainer} />
+        <Text style={styles.temp}>{condition}</Text>
+        <Text style={styles.temp}>{temp}°</Text>
+        <Text style={styles.location}>{name}</Text>
+        <Text style={styles.minMaxTemp}>최저기온: {temp_min}°</Text>
+        <Text style={styles.minMaxTemp}>최고기온: {temp_max}°</Text>
       </View>
     )
   }
 }
 
 Weather.propTypes = {
-  temp: PropTypes.number.isRequired,
-  condition: PropTypes.string.isRequired,
+  form: PropTypes.object.isRequired,
 };
 
 const styles = StyleSheet.create({
@@ -70,17 +94,33 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'blue'
+    backgroundColor: 'white'
+  },
+  location: {
+    marginBottom: 20,
+    fontSize: 40,
+    color: 'black'
   },
   temp: {
+    marginBottom: 20,
     fontSize: 85,
-    color: 'white'
+    color: 'black'
   },
-  halfContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
+  minMaxTemp: {
+    fontSize: 16,
+    color: 'black'
+  },
 });
 
-export default Weather;
+const stateToProps = (state) => ({
+  form: indexSelector.form(state),
+});
+
+const dispatchToProps = (dispatch) => ({
+  actions: bindActionCreators(actions, dispatch),
+});
+
+export default connect(
+  stateToProps,
+  dispatchToProps,
+)(Weather);
