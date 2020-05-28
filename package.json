@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@ant-design/react-native": "^3.3.0",
     "axios": "^0.19.2",
     "expo": "~37.0.3",
     "expo-linear-gradient": "~8.1.0",

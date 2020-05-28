@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Provider } from 'react-redux';
 
 import {store} from './store/store';
-import Weather from "./Wheater";
+import Weather from "./views/Wheater";
 
 class App extends Component {
   //
